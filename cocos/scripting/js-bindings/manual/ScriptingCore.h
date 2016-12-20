@@ -536,6 +536,7 @@ public:
 private:
     void string_report(JS::HandleValue val);
     void initRegister();
+    void clearGlobalMaps();
 
 public:
     int handleNodeEvent(void* data);

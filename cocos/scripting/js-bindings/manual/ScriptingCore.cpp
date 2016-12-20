@@ -563,18 +563,32 @@ void ScriptingCore::addRegisterCallback(sc_register_sth callback) {
 
 void ScriptingCore::removeAllRoots(JSContext *cx)
 {
-    // Native -> JS. No need to free "second"
-    _native_js_global_map.clear();
-
-    // JS -> Native: free "second" and "unroot" it.
-    auto it_js = _js_native_global_map.begin();
-    while (it_js != _js_native_global_map.end())
+    // JS -> Native: "unroot second".
+    for (auto it_js = _js_native_global_map.begin(); it_js != _js_native_global_map.end(); ++it_js)
     {
+#if !CC_ENABLE_GC_FOR_NATIVE_OBJECTS
         JS::RemoveObjectRoot(cx, &it_js->second->obj);
+#endif
+    }
+}
+
+void ScriptingCore::clearGlobalMaps()
+{
+    _native_js_global_map.clear();
+    for (auto it_js = _js_native_global_map.begin(); it_js != _js_native_global_map.end(); ++it_js)
+    {
         free(it_js->second);
-        it_js = _js_native_global_map.erase(it_js);
     }
     _js_native_global_map.clear();
+    
+    for (auto iter = _js_global_type_map.begin(); iter != _js_global_type_map.end(); ++iter)
+    {
+        free(iter->second->jsclass);
+        free(iter->second);
+    }
+    _js_global_type_map.clear();
+    
+    _js_hook_owner_map.clear();
 }
 
 // Just a wrapper around JSPrincipals that allows static construction.
@@ -912,13 +926,7 @@ void ScriptingCore::cleanup()
         _rt = NULL;
     }
     
-    for (auto iter = _js_global_type_map.begin(); iter != _js_global_type_map.end(); ++iter)
-    {
-        free(iter->second->jsclass);
-        free(iter->second);
-    }
-
-    _js_global_type_map.clear();
+    clearGlobalMaps();
     
     _needCleanup = false;
 }
