@@ -739,7 +739,7 @@ JSCallbackWrapper::~JSCallbackWrapper()
     ScriptingCore* sc = ScriptingCore::getInstance();
     JSContext* cx = sc->getGlobalContext();
     JS::RootedValue ownerVal(cx, _owner);
-    if (sc->getFinalizing() && !ownerVal.isNullOrUndefined())
+    if (!sc->getFinalizing() && !ownerVal.isNullOrUndefined())
     {
         JS::RootedValue target(cx, _jsCallback);
         if (!target.isNullOrUndefined())

@@ -148,7 +148,7 @@ JSFunctionWrapper::~JSFunctionWrapper()
 {
     JS::RootedValue ownerVal(_cx, _owner);
     
-    if (ScriptingCore::getInstance()->getFinalizing() && !ownerVal.isNullOrUndefined())
+    if (!ScriptingCore::getInstance()->getFinalizing() && !ownerVal.isNullOrUndefined())
     {
         JS::RootedValue thisVal(_cx, OBJECT_TO_JSVAL(_jsthis));
         if (!thisVal.isNullOrUndefined())
