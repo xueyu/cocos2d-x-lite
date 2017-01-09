@@ -553,6 +553,7 @@ bool ScriptingCore::evalString(const char *string)
 
 void ScriptingCore::start()
 {
+    _engineStartTime = std::chrono::steady_clock::now();
     // for now just this
     createGlobalContext();
 }
@@ -563,18 +564,32 @@ void ScriptingCore::addRegisterCallback(sc_register_sth callback) {
 
 void ScriptingCore::removeAllRoots(JSContext *cx)
 {
-    // Native -> JS. No need to free "second"
-    _native_js_global_map.clear();
-
-    // JS -> Native: free "second" and "unroot" it.
-    auto it_js = _js_native_global_map.begin();
-    while (it_js != _js_native_global_map.end())
+    // JS -> Native: "unroot second".
+    for (auto it_js = _js_native_global_map.begin(); it_js != _js_native_global_map.end(); ++it_js)
     {
+#if !CC_ENABLE_GC_FOR_NATIVE_OBJECTS
         JS::RemoveObjectRoot(cx, &it_js->second->obj);
+#endif
+    }
+}
+
+void ScriptingCore::clearGlobalMaps()
+{
+    _native_js_global_map.clear();
+    for (auto it_js = _js_native_global_map.begin(); it_js != _js_native_global_map.end(); ++it_js)
+    {
         free(it_js->second);
-        it_js = _js_native_global_map.erase(it_js);
     }
     _js_native_global_map.clear();
+    
+    for (auto iter = _js_global_type_map.begin(); iter != _js_global_type_map.end(); ++iter)
+    {
+        free(iter->second->jsclass);
+        free(iter->second);
+    }
+    _js_global_type_map.clear();
+    
+    _js_hook_owner_map.clear();
 }
 
 // Just a wrapper around JSPrincipals that allows static construction.
@@ -912,13 +927,7 @@ void ScriptingCore::cleanup()
         _rt = NULL;
     }
     
-    for (auto iter = _js_global_type_map.begin(); iter != _js_global_type_map.end(); ++iter)
-    {
-        free(iter->second->jsclass);
-        free(iter->second);
-    }
-
-    _js_global_type_map.clear();
+    clearGlobalMaps();
     
     _needCleanup = false;
 }
@@ -1593,6 +1602,12 @@ bool ScriptingCore::executeFunctionWithOwner(jsval owner, const char *name, cons
     return bRet;
 }
 
+std::chrono::steady_clock::time_point ScriptingCore::getEngineStartTime() const
+{
+	return _engineStartTime;
+}
+
+
 bool ScriptingCore::handleKeyboardEvent(void* nativeObj, cocos2d::EventKeyboard::KeyCode keyCode, bool isPressed, cocos2d::Event* event)
 {
     JSAutoCompartment ac(_cx, _global->get());
@@ -1606,7 +1621,7 @@ bool ScriptingCore::handleKeyboardEvent(void* nativeObj, cocos2d::EventKeyboard:
     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::EventKeyboard>((cocos2d::EventKeyboard*)event);
     jsval args[2] = {
         int32_to_jsval(_cx, (int32_t)keyCode),
-        OBJECT_TO_JSVAL(jsb_get_or_create_weak_jsobject(_cx, event, typeClass, "cocos2d::EventKeyboard"))
+        OBJECT_TO_JSVAL(jsb_get_or_create_weak_jsobject(_cx, event, typeClass))
     };
 
     if (isPressed)
@@ -2320,7 +2335,6 @@ JSObject* jsb_ref_get_or_create_jsobject(JSContext *cx, cocos2d::Ref *ref, js_ty
         return obj;
     }
 
-    // don't auto-release, don't retain.
     JS::RootedObject proto(cx, typeClass->proto.ref());
     JS::RootedObject parent(cx, typeClass->parentProto.ref());
     JS::RootedObject jsObj(cx, JS_NewObject(cx, typeClass->jsclass, proto, parent));
@@ -2333,7 +2347,7 @@ JSObject* jsb_ref_get_or_create_jsobject(JSContext *cx, cocos2d::Ref *ref, js_ty
     CCLOG("++++++RETAINED++++++ Cpp(%s): %p - JS: %p", debug, ref, jsObj.get());
 #endif // COCOS2D_DEBUG
 #else
-    // don't autorelease it
+    // don't auto-release, don't retain.
     JS::AddNamedObjectRoot(cx, &newproxy->obj, debug);
 #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
 

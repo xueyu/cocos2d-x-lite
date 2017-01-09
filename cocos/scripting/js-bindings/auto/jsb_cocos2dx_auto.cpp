@@ -2211,7 +2211,7 @@ bool js_cocos2dx_Node_setOnExitCallback(JSContext *cx, uint32_t argc, jsval *vp)
 		        auto lambda = [=]() -> void {
 		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(0, nullptr, &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::empty(), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -2449,7 +2449,7 @@ bool js_cocos2dx_Node_setonEnterTransitionDidFinishCallback(JSContext *cx, uint3
 		        auto lambda = [=]() -> void {
 		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(0, nullptr, &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::empty(), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -2729,7 +2729,7 @@ bool js_cocos2dx_Node_setOnEnterCallback(JSContext *cx, uint32_t argc, jsval *vp
 		        auto lambda = [=]() -> void {
 		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(0, nullptr, &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::empty(), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -2809,7 +2809,7 @@ bool js_cocos2dx_Node_setonExitTransitionDidStartCallback(JSContext *cx, uint32_
 		        auto lambda = [=]() -> void {
 		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(0, nullptr, &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::empty(), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -4663,7 +4663,7 @@ bool js_cocos2dx_Node_enumerateChildren(JSContext *cx, uint32_t argc, jsval *vp)
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -7652,7 +7652,7 @@ bool js_cocos2dx_Scheduler_performFunctionInCocosThread(JSContext *cx, uint32_t 
 		        auto lambda = [=]() -> void {
 		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(0, nullptr, &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::empty(), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -11038,7 +11038,7 @@ bool js_cocos2dx_EventListenerAcceleration_init(JSContext *cx, uint32_t argc, js
 		            largv[1] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(2, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(2, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -13433,7 +13433,7 @@ bool js_cocos2dx_GLProgramState_setUniformCallback(JSContext *cx, uint32_t argc,
 			        };
 			            largv[1] = uniform_to_jsval(cx, larg1);
 			            JS::RootedValue rval(cx);
-			            bool succeed = func->invoke(2, &largv[0], &rval);
+			            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(2, largv), &rval);
 			            if (!succeed && JS_IsExceptionPending(cx)) {
 			                JS_ReportPendingException(cx);
 			            }
@@ -13475,7 +13475,7 @@ bool js_cocos2dx_GLProgramState_setUniformCallback(JSContext *cx, uint32_t argc,
 			        };
 			            largv[1] = uniform_to_jsval(cx, larg1);
 			            JS::RootedValue rval(cx);
-			            bool succeed = func->invoke(2, &largv[0], &rval);
+			            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(2, largv), &rval);
 			            if (!succeed && JS_IsExceptionPending(cx)) {
 			                JS_ReportPendingException(cx);
 			            }
@@ -13650,7 +13650,7 @@ bool js_cocos2dx_GLProgramState_setVertexAttribCallback(JSContext *cx, uint32_t 
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -20221,7 +20221,7 @@ bool js_cocos2dx_ActionFloat_initWithDuration(JSContext *cx, uint32_t argc, jsva
 		            jsval largv[1];
 		            largv[0] = DOUBLE_TO_JSVAL(larg0);
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -20267,7 +20267,7 @@ bool js_cocos2dx_ActionFloat_create(JSContext *cx, uint32_t argc, jsval *vp)
 		            jsval largv[1];
 		            largv[0] = DOUBLE_TO_JSVAL(larg0);
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -35696,7 +35696,7 @@ bool js_cocos2dx_MenuItem_initWithCallback(JSContext *cx, uint32_t argc, jsval *
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -35796,7 +35796,7 @@ bool js_cocos2dx_MenuItem_setCallback(JSContext *cx, uint32_t argc, jsval *vp)
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -36059,7 +36059,7 @@ bool js_cocos2dx_MenuItemLabel_initWithLabel(JSContext *cx, uint32_t argc, jsval
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -36246,7 +36246,7 @@ bool js_cocos2dx_MenuItemAtlasFont_initWithString(JSContext *cx, uint32_t argc, 
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -36435,7 +36435,7 @@ bool js_cocos2dx_MenuItemFont_initWithString(JSContext *cx, uint32_t argc, jsval
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -36776,7 +36776,7 @@ bool js_cocos2dx_MenuItemSprite_initWithNormalSprite(JSContext *cx, uint32_t arg
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -37132,7 +37132,7 @@ bool js_cocos2dx_MenuItemImage_initWithNormalImage(JSContext *cx, uint32_t argc,
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
@@ -53578,7 +53578,7 @@ bool js_cocos2dx_TextureCache_addImageAsync(JSContext *cx, uint32_t argc, jsval 
 		            largv[0] = JSVAL_NULL;
 		        };
 		            JS::RootedValue rval(cx);
-		            bool succeed = func->invoke(1, &largv[0], &rval);
+		            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(1, largv), &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
