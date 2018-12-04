@@ -41,6 +41,7 @@
 #include "base/ccMacros.h"
 #include "platform/CCFileUtils.h"
 #include <map>
+#include <mutex>
 
 // IDEA: Other platforms should use upstream minizip like mingw-w64
 #ifdef MINIZIP_FROM_SYSTEM
@@ -515,6 +516,7 @@ public:
     // std::unordered_map is faster if available on the platform
     typedef std::unordered_map<std::string, struct ZipEntryInfo> FileListContainer;
     FileListContainer fileList;
+    std::mutex mutex;
 };
 
 ZipFile *ZipFile::createWithBuffer(const void* buffer, uLong size)
@@ -612,6 +614,7 @@ bool ZipFile::fileExists(const std::string &fileName) const
 
 unsigned char *ZipFile::getFileData(const std::string &fileName, ssize_t *size)
 {
+    std::lock_guard<std::mutex> guard(_data->mutex);
     unsigned char * buffer = nullptr;
     if (size)
         *size = 0;
@@ -648,6 +651,7 @@ unsigned char *ZipFile::getFileData(const std::string &fileName, ssize_t *size)
 
 bool ZipFile::getFileData(const std::string &fileName, ResizableBuffer* buffer)
 {
+    std::lock_guard<std::mutex> guard(_data->mutex);
     bool res = false;
     do
     {
